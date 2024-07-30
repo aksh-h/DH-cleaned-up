@@ -24,14 +24,19 @@ steps:
   displayName: 'Build solution'
   inputs:
     solution: '**\src\VSTSDemoGeneratorV2.sln'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+    msbuildArgs: '/p:Configuration=Debug /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
+
+- task: CopyFiles@1
+  displayName: 'Copy Files to: $(build.sourcesdirectory)\src\VstsDemoBuilder\obj\Release\Package\PackageTmp'
+  inputs:
+    SourceFolder: '$(build.artifactstagingdirectory)\'
+    Contents: '**\*'
+    TargetFolder: '$(build.sourcesdirectory)\Artifacts'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
-    PathtoPublish: '$(build.sourcesdirectory)\src\VstsDemoBuilder\obj\Release\Package\PackageTmp'
+    PathtoPublish: '$(build.sourcesdirectory)\Artifacts'
     ArtifactName: '$(Parameters.ArtifactName)'
 
 

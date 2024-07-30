@@ -13,7 +13,6 @@ stages:
       solution: '**\src\VSTSDemoGeneratorV2.sln'
       artifactName: 'drop'
 
-
     steps:
     - task: NuGetToolInstaller@0
       displayName: 'Use NuGet 5.11.0'
@@ -44,33 +43,6 @@ stages:
         PathtoPublish: '$(build.sourcesdirectory)\Artifacts'
         ArtifactName: '$(artifactName)'
 
-- stage: Deploy
-  dependsOn: Build
-  jobs:
-  - job: DeploymentJob
-    pool:
-      name: Azure Pipelines
-      demands:
-      - msbuild
-      - visualstudio
-      vmImage: 'windows-2019'
-
-    steps:
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Build Artifacts'
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'drop'
-        downloadPath: '$(System.DefaultWorkingDirectory)'
-    
-    - task: AzureRmWebAppDeployment@4
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'demogen-test'
-        appType: webApp
-        WebAppName: 'dgnew'
-
 
 - stage: Production
   dependsOn: Build
@@ -86,6 +58,8 @@ stages:
     strategy:
       runOnce:
         deploy:
+          pool: 
+            vmImage: 'windows-2019'
           steps:
             - download: current
               artifact: drop

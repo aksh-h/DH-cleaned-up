@@ -1,42 +1,75 @@
-pool:
-  name: Azure Pipelines
-  demands:
-  - msbuild
-  - visualstudio
-  vmImage: 'windows-2019'
+stages:
+- stage: Build
+  jobs:
+  - job: BuildJob
+    pool:
+      name: Azure Pipelines
+      demands:
+      - msbuild
+      - visualstudio
+      vmImage: 'windows-2019'
+
+    variables:
+      solution: '**\src\VSTSDemoGeneratorV2.sln'
+      artifactName: 'drop'
 
 
-variables:
-  solution: '**\src\VSTSDemoGeneratorV2.sln'
+    steps:
+    - task: NuGetToolInstaller@0
+      displayName: 'Use NuGet 5.11.0'
+      inputs:
+        versionSpec: 5.11.0
 
-steps:
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 5.11.0'
-  inputs:
-    versionSpec: 5.11.0
+    - task: NuGetCommand@2
+      displayName: 'NuGet restore'
+      inputs:
+        restoreSolution: '$(solution)'
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    restoreSolution: '**\src\VSTSDemoGeneratorV2.sln'
+    - task: VSBuild@1
+      displayName: 'Build solution'
+      inputs:
+        solution: '$(solution)'
+        msbuildArgs: '/p:Configuration=Debug /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
 
-- task: VSBuild@1
-  displayName: 'Build solution'
-  inputs:
-    solution: '**\src\VSTSDemoGeneratorV2.sln'
-    msbuildArgs: '/p:Configuration=Debug /p:Platform="Any CPU" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
+    - task: CopyFiles@1
+      displayName: 'Copy Files to: $(build.sourcesdirectory)\src\VstsDemoBuilder\obj\Release\Package\PackageTmp'
+      inputs:
+        SourceFolder: '$(build.artifactstagingdirectory)\' 
+        Contents: '**\*'
+        TargetFolder: '$(build.sourcesdirectory)\Artifacts'
 
-- task: CopyFiles@1
-  displayName: 'Copy Files to: $(build.sourcesdirectory)\src\VstsDemoBuilder\obj\Release\Package\PackageTmp'
-  inputs:
-    SourceFolder: '$(build.artifactstagingdirectory)\'
-    Contents: '**\*'
-    TargetFolder: '$(build.sourcesdirectory)\Artifacts'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.sourcesdirectory)\Artifacts'
+        ArtifactName: '$(artifactName)'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    PathtoPublish: '$(build.sourcesdirectory)\Artifacts'
-    ArtifactName: 'drop'
+- stage: Deploy
+  jobs:
+  - deployment: DeploymentJob
+  - dependsOn: Build
 
+    pool:
+      name: Azure Pipelines
+      demands:
+      - msbuild
+      - visualstudio
+      vmImage: 'windows-2019'
 
+    steps:
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
+    
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'demogen-test'
+        appName: 'dgnew'
+        package: '$(System.ArtifactsDirectory)\drop\**\*.zip'
+        enableCustomDeployment: true
+        deploymentMethod: 'webDeploy'
+        takeAppOfflineFlag: true

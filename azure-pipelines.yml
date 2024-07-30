@@ -4,7 +4,7 @@ pool:
   - msbuild
   - visualstudio
   vmImage:
-  - windows-latest
+  - windows-2019
 
 
 variables:

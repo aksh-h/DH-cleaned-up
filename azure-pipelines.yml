@@ -48,7 +48,7 @@ stages:
 - stage: Test
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.Reason'], 'IndividualCI'))
-  displayName: Production Deployment
+  displayName: Test Deployment
   jobs: 
   - deployment: DeployWeb
     displayName: Deploy to Test Environment
@@ -57,7 +57,6 @@ stages:
       name: 'Test'
 
     variables: 
-       subscription: 'demogen-test'
        webAppName: 'dgnew-test'
     strategy:
       runOnce:
@@ -76,7 +75,7 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: '$(subscription)'
+                azureSubscription: 'demogen-test'
                 appType: webApp
                 WebAppName: '$(webAppName)'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId-test) -ClientSecret $(ClientSecret-test) -RedirectUri $(RedirectUri-test) -AppScope $(AppScope-test)'
@@ -92,7 +91,6 @@ stages:
       name: 'Production'
 
     variables: 
-       subscription: 'demogen-test'
        webAppName: 'dgnew'
     strategy:
       runOnce:
@@ -111,7 +109,7 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: '$(subscription)'
+                azureSubscription: 'demogen-test'
                 appType: webApp
                 WebAppName: '$(webAppName)'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'

@@ -47,7 +47,7 @@ stages:
 
 - stage: Test
   dependsOn: Build
-  condition: and(succeeded(), or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'Manual'))))
+  condition: and(succeeded(), or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'Manual')))
   displayName: Test Deployment
   jobs: 
   - deployment: DeployWeb

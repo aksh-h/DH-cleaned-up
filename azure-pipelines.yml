@@ -1,7 +1,7 @@
 stages:
 - stage: Build
   jobs:
-  - job: BuildJob
+  - job: Build
     pool:
       name: Azure Pipelines
       demands:
@@ -44,22 +44,26 @@ stages:
         ArtifactName: '$(artifactName)'
 
 
-- stage: Production
+
+- stage: Test
   dependsOn: Build
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Production Deployment
   jobs: 
   - deployment: DeployWeb
-    displayName: Deploy to Production Environment
+    displayName: Deploy to Test Environment
 
     environment: 
-      name: 'Production'
+      name: 'Test'
 
+    variables: 
+       Subscription: 'demogen-test'
+       webAppName: 'dgnew-test'
     strategy:
       runOnce:
         deploy:
           pool: 
-            vmImage: 'windows-2019'
+            vmImage: 'windows-2019'         
           steps:
             - task: DownloadBuildArtifacts@0
               displayName: 'Download Build Artifacts'
@@ -72,14 +76,51 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: 'demogen-test'
+                azureSubscription: '$(Subscription)'
                 appType: webApp
-                WebAppName: 'dgnew'
+                WebAppName: '$(webAppName)'
+                AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId-test) -ClientSecret $(ClientSecret-test) -RedirectUri $(RedirectUri-test) -AppScope $(AppScope-test)'
+
+- stage: Production
+  dependsOn: Build
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: Production Deployment
+  jobs: 
+  - deployment: DeployWeb
+    displayName: Deploy to Production Environment
+
+    environment: 
+      name: 'Production'
+
+    variables: 
+       Subscription: 'demogen-test'
+       webAppName: 'dgnew'
+    strategy:
+      runOnce:
+        deploy:
+          pool: 
+            vmImage: 'windows-2019'         
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: 'Download Build Artifacts'
+              inputs:
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: 'drop'
+                downloadPath: '$(System.DefaultWorkingDirectory)'
+            
+            - task: AzureRmWebAppDeployment@4
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: '$(Subscription)'
+                appType: webApp
+                WebAppName: '$(webAppName)'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'
 
-            # - task: AzureAppServiceSettings@1
-            #   inputs:
-            #     azureSubscription: 'demogen-test'
-            #     appName: 'dgnew'
-            #     resourceGroupName: 'landmark'
-            #     appSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'
+            - task: AzureRmWebAppDeployment@4
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: '$(Subscription)'
+                appType: webApp
+                WebAppName: '$(webAppName)-test'
+                AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'

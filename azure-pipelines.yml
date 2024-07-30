@@ -37,6 +37,6 @@ steps:
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(build.sourcesdirectory)\Artifacts'
-    ArtifactName: '$(Parameters.ArtifactName)'
+    ArtifactName: 'drop'
 
 

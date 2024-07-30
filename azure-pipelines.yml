@@ -57,7 +57,7 @@ stages:
       name: 'Test'
 
     variables: 
-       Subscription: 'demogen-test'
+       subscription: 'demogen-test'
        webAppName: 'dgnew-test'
     strategy:
       runOnce:
@@ -76,7 +76,7 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: '$(Subscription)'
+                azureSubscription: '$(subscription)'
                 appType: webApp
                 WebAppName: '$(webAppName)'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId-test) -ClientSecret $(ClientSecret-test) -RedirectUri $(RedirectUri-test) -AppScope $(AppScope-test)'
@@ -92,7 +92,7 @@ stages:
       name: 'Production'
 
     variables: 
-       Subscription: 'demogen-test'
+       subscription: 'demogen-test'
        webAppName: 'dgnew'
     strategy:
       runOnce:
@@ -111,15 +111,7 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: '$(Subscription)'
+                azureSubscription: '$(subscription)'
                 appType: webApp
                 WebAppName: '$(webAppName)'
-                AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'
-
-            - task: AzureRmWebAppDeployment@4
-              inputs:
-                ConnectionType: 'AzureRM'
-                azureSubscription: '$(Subscription)'
-                appType: webApp
-                WebAppName: '$(webAppName)-test'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'

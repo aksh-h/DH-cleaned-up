@@ -47,17 +47,6 @@ stages:
 - stage: Deploy
   dependsOn: Build
   jobs:
-  - job: DymmyDeploymentJob
-    pool:
-      name: Azure Pipelines
-      demands:
-      - msbuild
-      - visualstudio
-      vmImage: 'windows-2019'
-    steps:
-      - script: echo "This is a dummy job to satisfy the requirement of having at least one job with no dependencies."
-        displayName: 'Dummy Job'
-
   - job: DeploymentJob
     pool:
       name: Azure Pipelines

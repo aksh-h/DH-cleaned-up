@@ -7,7 +7,7 @@ pool:
 
 
 variables:
-  solution: '**\*.sln'
+  solution: '**\src\*.sln'
 
 steps:
 - task: NuGetToolInstaller@0

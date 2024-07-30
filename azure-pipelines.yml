@@ -75,3 +75,11 @@ stages:
                 azureSubscription: 'demogen-test'
                 appType: webApp
                 WebAppName: 'dgnew'
+                AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'
+
+            # - task: AzureAppServiceSettings@1
+            #   inputs:
+            #     azureSubscription: 'demogen-test'
+            #     appName: 'dgnew'
+            #     resourceGroupName: 'landmark'
+            #     appSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'

@@ -81,4 +81,3 @@ stages:
         appName: 'dgnew'
         appType: 'webApp' 
         package: '$(System.ArtifactsDirectory)\drop\**\*.zip'
-        deploymentMethod: 'zipDeploy'

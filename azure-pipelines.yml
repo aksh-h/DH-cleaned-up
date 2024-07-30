@@ -47,7 +47,7 @@ stages:
 
 - stage: Test
   dependsOn: Build
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'IndividualCI'))
   displayName: Production Deployment
   jobs: 
   - deployment: DeployWeb
@@ -82,8 +82,7 @@ stages:
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId-test) -ClientSecret $(ClientSecret-test) -RedirectUri $(RedirectUri-test) -AppScope $(AppScope-test)'
 
 - stage: Production
-  dependsOn: Build
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   displayName: Production Deployment
   jobs: 
   - deployment: DeployWeb

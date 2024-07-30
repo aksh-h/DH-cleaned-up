@@ -47,7 +47,7 @@ stages:
 - stage: Deploy
   jobs:
   - job: DeploymentJob
-  - dependsOn: Build
+    dependsOn: Build
 
     pool:
       name: Azure Pipelines
@@ -69,7 +69,6 @@ stages:
       inputs:
         azureSubscription: 'demogen-test'
         appName: 'dgnew'
+        appType: 'webApp' 
         package: '$(System.ArtifactsDirectory)\drop\**\*.zip'
-        enableCustomDeployment: true
-        deploymentMethod: 'webDeploy'
-        takeAppOfflineFlag: true
+        deploymentMethod: 'zipDeploy'

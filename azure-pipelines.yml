@@ -81,3 +81,30 @@ stages:
         azureSubscription: 'demogen-test'
         appType: webApp
         WebAppName: 'dgnew'
+
+
+- stage: Production
+  dependsOn: Build
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: Production Deployment
+  jobs: 
+  - deployment: DeployWeb
+    displayName: Deploy to Production Environment
+
+    environment: 
+      name: 'Production'
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: drop
+            
+            - task: AzureWebApp@1
+              displayName: 'Production Deployment'
+              inputs:
+                  azureSubscription: 'demogen-test'
+                  appType: webApp
+                  appName: 'dgnew'
+                  package: '$(Agent.BuildDirectory)/**/*.zip'

@@ -61,13 +61,17 @@ stages:
           pool: 
             vmImage: 'windows-2019'
           steps:
-            - download: current
-              artifact: drop
-            
-            - task: AzureWebApp@1
-              displayName: 'Production Deployment'
+            - task: DownloadBuildArtifacts@0
+              displayName: 'Download Build Artifacts'
               inputs:
-                  azureSubscription: 'demogen-test'
-                  appType: webApp
-                  appName: 'dgnew'
-                  package: '$(Agent.BuildDirectory)/**/*.zip'
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: 'drop'
+                downloadPath: '$(System.DefaultWorkingDirectory)'
+            
+            - task: AzureRmWebAppDeployment@4
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: 'demogen-test'
+                appType: webApp
+                WebAppName: 'dgnew'

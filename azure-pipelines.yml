@@ -7,7 +7,7 @@ pool:
 
 
 variables:
-  solution: '**\src\*.sln'
+  solution: '**\src\VstsDemoBuilder.sln'
 
 steps:
 - task: NuGetToolInstaller@0
@@ -18,12 +18,12 @@ steps:
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
   inputs:
-    restoreSolution: '$(Parameters.solution)'
+    restoreSolution: '**\src\VstsDemoBuilder.sln'
 
 - task: VSBuild@1
   displayName: 'Build solution'
   inputs:
-    solution: '$(Parameters.solution)'
+    solution: '**\src\VstsDemoBuilder.sln'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
@@ -31,7 +31,7 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
-    PathtoPublish: '$(build.sourcesdirectory)\src\\VstsDemoBuilder\obj\Release\Package\PackageTmp'
+    PathtoPublish: '$(build.sourcesdirectory)\src\VstsDemoBuilder\obj\Release\Package\PackageTmp'
     ArtifactName: '$(Parameters.ArtifactName)'
 
 

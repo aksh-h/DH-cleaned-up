@@ -3,6 +3,9 @@ pool:
   demands:
   - msbuild
   - visualstudio
+  vmImage:
+  - windows-latest
+
 
 variables:
   solution: '**\*.sln'

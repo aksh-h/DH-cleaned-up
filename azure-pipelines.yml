@@ -7,7 +7,7 @@ pool:
 
 
 variables:
-  solution: '**\src\VstsDemoBuilder.sln'
+  solution: '**\src\VSTSDemoGeneratorV2.sln'
 
 steps:
 - task: NuGetToolInstaller@0
@@ -18,12 +18,12 @@ steps:
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
   inputs:
-    restoreSolution: '**\src\VstsDemoBuilder.sln'
+    restoreSolution: '**\src\VSTSDemoGeneratorV2.sln'
 
 - task: VSBuild@1
   displayName: 'Build solution'
   inputs:
-    solution: '**\src\VstsDemoBuilder.sln'
+    solution: '**\src\VSTSDemoGeneratorV2.sln'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'

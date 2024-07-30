@@ -58,9 +58,9 @@ stages:
     - task: CmdLine@2
       inputs:
         script: 'echo Dummy Deployment'
-        
+
   - job: DeploymentJob
-    dependsOn: Build
+    dependsOn: BuildJob
 
     pool:
       name: Azure Pipelines

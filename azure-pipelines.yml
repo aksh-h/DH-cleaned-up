@@ -45,22 +45,10 @@ stages:
         ArtifactName: '$(artifactName)'
 
 - stage: Deploy
+  dependsOn: Build
   jobs:
-  - job: DummyJob
-    pool:
-      name: Azure Pipelines
-      demands:
-      - msbuild
-      - visualstudio
-      vmImage: 'windows-2019'
-
-    steps:
-    - task: CmdLine@2
-      inputs:
-        script: 'echo Dummy Deployment'
-
   - job: DeploymentJob
-    dependsOn: BuildJob
+    dependsOn: Build
 
     pool:
       name: Azure Pipelines

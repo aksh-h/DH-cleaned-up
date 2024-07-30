@@ -46,7 +46,7 @@ stages:
 
 - stage: Deploy
   jobs:
-  - deployment: DeploymentJob
+  - job: DeploymentJob
   - dependsOn: Build
 
     pool:

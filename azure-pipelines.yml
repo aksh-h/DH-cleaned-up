@@ -1,1 +1,35 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - msbuild
+  - visualstudio
+
+variables:
+  solution: '**\*.sln'
+
+steps:
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 5.11.0'
+  inputs:
+    versionSpec: 5.11.0
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '$(Parameters.solution)'
+
+- task: VSBuild@1
+  displayName: 'Build solution'
+  inputs:
+    solution: '$(Parameters.solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.sourcesdirectory)\src\\VstsDemoBuilder\obj\Release\Package\PackageTmp'
+    ArtifactName: '$(Parameters.ArtifactName)'
+
 

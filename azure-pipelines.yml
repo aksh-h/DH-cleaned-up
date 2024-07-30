@@ -57,7 +57,7 @@ stages:
       name: 'Test'
 
     variables: 
-       webAppName: 'dgnew-test'
+       webAppName: 'dgnew'
     strategy:
       runOnce:
         deploy:
@@ -77,6 +77,8 @@ stages:
                 ConnectionType: 'AzureRM'
                 azureSubscription: 'demogen-test'
                 appType: webApp
+                deployToSlotOrASE: true
+                SlotName: 'test'
                 WebAppName: '$(webAppName)'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId-test) -ClientSecret $(ClientSecret-test) -RedirectUri $(RedirectUri-test) -AppScope $(AppScope-test)'
 

@@ -75,7 +75,7 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: 'demogen-tested'
+                azureSubscription: 'demogen-connection'
                 appType: webApp
                 deployToSlotOrASE: true
                 SlotName: 'test'
@@ -111,7 +111,7 @@ stages:
             - task: AzureRmWebAppDeployment@4
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: 'demogen-tested'
+                azureSubscription: 'demogen-connection'
                 appType: webApp
                 WebAppName: '$(webAppName)'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId) -ClientSecret $(ClientSecret) -RedirectUri $(RedirectUri) -AppScope $(AppScope)'

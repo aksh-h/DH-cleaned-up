@@ -77,9 +77,7 @@ stages:
                 ConnectionType: 'AzureRM'
                 azureSubscription: 'demogen-connection'
                 appType: webApp
-                deployToSlotOrASE: true
-                SlotName: 'test'
-                WebAppName: '$(webAppName)'
+                WebAppName: '$(webAppName)-test'
                 AppSettings: '-DefaultTemplate eShopOnWeb -Password $(Password) -ClientId $(ClientId-test) -ClientSecret $(ClientSecret-test) -RedirectUri $(RedirectUri-test) -AppScope $(AppScope-test)'
 
 - stage: Production
